@@ -49,16 +49,9 @@ jobs:
           body: |
             ## 🚀 Release v${{ inputs.version }}
             
-            ### Docker Image
-            
-            Pull the latest version:
-            ```bash
-            docker pull jsfrnc/mt5-docker-api:${{ inputs.version }}
-            ```
-            
             Or use Docker Compose:
             ```bash
-            wget https://raw.githubusercontent.com/jefrnc/mt5-docker-api/v${{ inputs.version }}/docker-compose.yml
+            wget https://raw.githubusercontent.com/ddiserens/mt5-docker-api/v${{ inputs.version }}/docker-compose.yml
             docker-compose up -d
             ```
             
@@ -72,7 +65,7 @@ jobs:
               -v mt5_data:/config \
               -e CUSTOM_USER=trader \
               -e PASSWORD=secure_password \
-              jsfrnc/mt5-docker-api:${{ inputs.version }}
+              ddiserens/mt5-docker-api:${{ inputs.version }}
             ```
             
             ### Access Points
@@ -81,10 +74,9 @@ jobs:
             - MT5 Python: localhost:8001
             
             ### Documentation
-            - [Full Documentation](https://github.com/jefrnc/mt5-docker-api#readme)
-            - [Docker Hub](https://hub.docker.com/r/jsfrnc/mt5-docker-api)
+            - [Full Documentation](https://github.com/ddiserens/mt5-docker-api#readme)
             
             ### What's Changed
-            See [full changelog](https://github.com/jefrnc/mt5-docker-api/commits/v${{ inputs.version }})
+            See [full changelog](https://github.com/ddiserens/mt5-docker-api/commits/v${{ inputs.version }})
           draft: false
           prerelease: false

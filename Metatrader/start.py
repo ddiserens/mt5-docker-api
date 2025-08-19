@@ -174,7 +174,7 @@ class MT5Installer:
                         downloaded += len(chunk)
                         if total_size > 0:
                             progress = (downloaded / total_size) * 100
-                            if downloaded % (1024 * 1024) == 0: # Log every MB
+                            if downloaded % (1024 * 1024) == 0:  # Log every MB
                                 logger.info(f"Progress: {progress:.1f}% ({downloaded/1024/1024:.1f}MB/{total_size/1024/1024:.1f}MB)")
             
             # Verify checksum if available
@@ -272,7 +272,7 @@ class MT5Installer:
         # Configure Wine for Windows 10
         self.run_command([
             "wine", "reg", "add", 
-            "HKEY_CURRENT_USER\Software\Wine",
+            "HKEY_CURRENT_USER\\Software\\Wine",
             "/v", "Version", "/t", "REG_SZ", 
             "/d", self.settings.wine_version, "/f"
         ])

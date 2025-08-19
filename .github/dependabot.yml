@@ -6,7 +6,7 @@ updates:
     schedule:
       interval: "weekly"
     reviewers:
-      - "jefrnc"
+      - "ddiserens"
     
   # Python dependencies
   - package-ecosystem: "pip"
@@ -14,7 +14,7 @@ updates:
     schedule:
       interval: "weekly"
     reviewers:
-      - "jefrnc"
+      - "ddiserens"
     
   # GitHub Actions
   - package-ecosystem: "github-actions"
@@ -22,4 +22,4 @@ updates:
     schedule:
       interval: "weekly"
     reviewers:
-      - "jefrnc"
+      - "ddiserens"

@@ -1,24 +1,26 @@
 FROM python:3.13-slim
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install system dependencies and add i386 architecture for Wine
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     wget \
     curl \
     gnupg2 \
     software-properties-common \
+    ca-certificates \
     xvfb \
     x11vnc \
     novnc \
     supervisor \
     net-tools \
-    && rm -rf /var/lib/apt/lists/*
+    iproute2 && \
+    dpkg --add-architecture i386 && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install Wine
-RUN dpkg --add-architecture i386 && \
-    wget -nc https://dl.winehq.org/wine-builds/winehq.key && \
-    apt-key add winehq.key && \
-    rm winehq.key && \
-    echo "deb https://dl.winehq.org/wine-builds/debian/ bullseye main" > /etc/apt/sources.list.d/winehq.list && \
+# Install Wine using the modern and secure key management method
+RUN mkdir -p /etc/apt/keyrings && \
+    wget -qO- https://dl.winehq.org/wine-builds/winehq.key | gpg --dearmor -o /etc/apt/keyrings/winehq-archive.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/winehq-archive.gpg] https://dl.winehq.org/wine-builds/debian/ bullseye main" > /etc/apt/sources.list.d/winehq.list && \
     apt-get update && \
     apt-get install -y --install-recommends winehq-stable && \
     rm -rf /var/lib/apt/lists/*
@@ -38,10 +40,8 @@ ENV WINEARCH=win64
 ENV WINEDEBUG=-all
 ENV DISPLAY=:1
 
-# Create directories
-RUN mkdir -p /app /config
-
-# Copy application files
+# Create directories and copy application files
+RUN mkdir -p /app /config /var/log/supervisor
 COPY src/ /app/
 COPY Metatrader/ /Metatrader/
 
@@ -49,8 +49,7 @@ COPY Metatrader/ /Metatrader/
 RUN chmod +x /Metatrader/*.py 2>/dev/null || true
 
 # Supervisor configuration
-RUN mkdir -p /var/log/supervisor && \
-    echo '[supervisord]\n\
+RUN echo '[supervisord]\n\
 nodaemon=true\n\
 \n\
 [program:xvfb]\n\
@@ -90,8 +89,8 @@ VOLUME /config
 WORKDIR /app
 
 # Start supervisor
-
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
 
 
 

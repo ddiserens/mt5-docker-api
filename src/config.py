@@ -5,17 +5,17 @@ from pathlib import Path
 
 
 class MT5Settings(BaseSettings):
-    """Configuración validada para MetaTrader5 Docker"""
+    """Validated configuration for MetaTrader5 Docker"""
 
-    # Configuración de Wine
+    # Wine configuration
     wine_prefix: str = Field(default="/config/.wine")
     wine_version: str = Field(default="win10")
 
-    # Configuración de MT5
+    # MT5 configuration
     mt5_port: int = Field(default=8001, gt=1024, lt=65535)
     mt5_version: str = Field(default="5.0.36")
 
-    # URLs de descarga
+    # Download URLs
     mono_url: str = Field(
         default="https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi"
     )
@@ -26,7 +26,7 @@ class MT5Settings(BaseSettings):
         default="https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe"
     )
 
-    # Configuración VNC
+    # VNC configuration
     vnc_port: int = Field(default=3000, gt=1024, lt=65535)
     custom_user: Optional[str] = Field(default=None)
     password: Optional[str] = Field(default=None)
@@ -36,7 +36,7 @@ class MT5Settings(BaseSettings):
         default=["MetaTrader5==5.0.36", "mt5linux", "pyxdg"]
     )
 
-    # Timeouts y reintentos
+    # Timeouts and retries
     download_timeout: int = Field(default=300, gt=0)
     max_retries: int = Field(default=3, gt=0)
 
@@ -72,11 +72,11 @@ class MT5Settings(BaseSettings):
         return v.upper()
 
     def get_cache_dir(self) -> Path:
-        """Obtener directorio de caché"""
+        """Get cache directory"""
         return Path(self.wine_prefix).parent / ".cache"
 
     model_config = {"env_file": ".env", "case_sensitive": False}
 
 
-# Instancia global de configuración
+# Global configuration instance
 settings = MT5Settings()

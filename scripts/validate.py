@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script de validación completo para MT5 Docker API
+Full validation script for MT5 Docker API
 """
 import sys
 import time
@@ -21,7 +21,7 @@ class Validator:
         print(f"[{timestamp}] [{level}] {message}")
         
     def check_port(self, port, service):
-        """Verificar si un puerto está abierto"""
+        """Verify if a port is open"""
         try:
             result = subprocess.run(
                 ["nc", "-zv", "localhost", str(port)],
@@ -30,88 +30,88 @@ class Validator:
                 timeout=5
             )
             if result.returncode == 0:
-                self.log(f"✓ Puerto {port} ({service}) está abierto")
+                self.log(f"✓ Port {port} ({service}) is open")
                 return True
             else:
-                self.log(f"✗ Puerto {port} ({service}) no está accesible", "ERROR")
-                self.errors.append(f"Puerto {port} ({service}) no accesible")
+                self.log(f"✗ Port {port} ({service}) is not accessible", "ERROR")
+                self.errors.append(f"Port {port} ({service}) not accessible")
                 return False
         except Exception as e:
-            self.log(f"✗ Error verificando puerto {port}: {e}", "ERROR")
-            self.errors.append(f"Error verificando puerto {port}")
+            self.log(f"✗ Error checking port {port}: {e}", "ERROR")
+            self.errors.append(f"Error checking port {port}")
             return False
     
     def check_vnc(self):
-        """Verificar acceso VNC"""
-        self.log("Verificando acceso VNC...")
+        """Verify VNC access"""
+        self.log("Verifying VNC access...")
         try:
             response = requests.get(self.vnc_url, timeout=10)
             if response.status_code == 200:
-                self.log("✓ VNC web interface accesible")
+                self.log("✓ VNC web interface is accessible")
                 return True
             else:
-                self.log(f"✗ VNC devolvió código {response.status_code}", "ERROR")
+                self.log(f"✗ VNC returned code {response.status_code}", "ERROR")
                 self.errors.append(f"VNC status code: {response.status_code}")
                 return False
         except Exception as e:
-            self.log(f"✗ Error accediendo a VNC: {e}", "ERROR")
+            self.log(f"✗ Error accessing VNC: {e}", "ERROR")
             self.errors.append(f"VNC error: {str(e)}")
             return False
     
     def check_api_health(self):
-        """Verificar health endpoint de la API"""
-        self.log("Verificando API health...")
+        """Verify API health endpoint"""
+        self.log("Verifying API health...")
         try:
             response = requests.get(f"{self.base_url}/health", timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 if data.get("status") == "healthy":
-                    self.log("✓ API está saludable")
+                    self.log("✓ API is healthy")
                     if data.get("mt5_connected"):
-                        self.log("✓ MT5 está conectado")
+                        self.log("✓ MT5 is connected")
                     else:
-                        self.log("⚠ MT5 no está conectado", "WARNING")
-                        self.warnings.append("MT5 no conectado")
+                        self.log("⚠ MT5 is not connected", "WARNING")
+                        self.warnings.append("MT5 not connected")
                     return True
                 else:
-                    self.log("✗ API reporta estado no saludable", "ERROR")
+                    self.log("✗ API reports unhealthy status", "ERROR")
                     self.errors.append("API unhealthy")
                     return False
             else:
-                self.log(f"✗ API health devolvió código {response.status_code}", "ERROR")
+                self.log(f"✗ API health returned code {response.status_code}", "ERROR")
                 self.errors.append(f"API health status: {response.status_code}")
                 return False
         except Exception as e:
-            self.log(f"✗ Error accediendo a API health: {e}", "ERROR")
+            self.log(f"✗ Error accessing API health: {e}", "ERROR")
             self.errors.append(f"API health error: {str(e)}")
             return False
     
     def check_api_docs(self):
-        """Verificar documentación de la API"""
-        self.log("Verificando documentación API...")
+        """Verify API documentation"""
+        self.log("Verifying API documentation...")
         try:
             response = requests.get(f"{self.base_url}/docs", timeout=10)
             if response.status_code == 200:
-                self.log("✓ Documentación API accesible")
+                self.log("✓ API documentation is accessible")
                 return True
             else:
-                self.log(f"✗ Docs devolvió código {response.status_code}", "ERROR")
+                self.log(f"✗ Docs returned code {response.status_code}", "ERROR")
                 self.errors.append(f"API docs status: {response.status_code}")
                 return False
         except Exception as e:
-            self.log(f"✗ Error accediendo a docs: {e}", "ERROR")
+            self.log(f"✗ Error accessing docs: {e}", "ERROR")
             self.errors.append(f"API docs error: {str(e)}")
             return False
     
     def check_api_endpoints(self):
-        """Verificar endpoints principales de la API"""
+        """Verify main API endpoints"""
         endpoints = [
             ("/symbols", "GET", None),
             ("/account", "GET", None),
             ("/positions", "GET", None),
         ]
         
-        self.log("Verificando endpoints de la API...")
+        self.log("Verifying API endpoints...")
         all_ok = True
         
         for endpoint, method, data in endpoints:
@@ -140,47 +140,47 @@ class Validator:
         return all_ok
     
     def check_websocket(self):
-        """Verificar WebSocket endpoint"""
-        self.log("Verificando WebSocket...")
+        """Verify WebSocket endpoint"""
+        self.log("Verifying WebSocket...")
         try:
             import websocket
             
             ws = websocket.WebSocket()
             ws.connect("ws://localhost:8000/ws/ticks/EURUSD", timeout=5)
             
-            # Esperar un mensaje
+            # Wait for a message
             ws.settimeout(5)
             try:
                 message = ws.recv()
                 data = json.loads(message)
                 if "symbol" in data:
-                    self.log("✓ WebSocket funcional")
+                    self.log("✓ WebSocket is functional")
                     ws.close()
                     return True
             except websocket.WebSocketTimeoutException:
-                self.log("⚠ WebSocket conectado pero sin datos", "WARNING")
-                self.warnings.append("WebSocket sin datos")
+                self.log("⚠ WebSocket connected but no data received", "WARNING")
+                self.warnings.append("WebSocket no data")
                 ws.close()
                 return True
                 
         except ImportError:
-            self.log("⚠ Módulo websocket no instalado, saltando prueba", "WARNING")
-            self.warnings.append("WebSocket no probado")
+            self.log("⚠ websocket module not installed, skipping test", "WARNING")
+            self.warnings.append("WebSocket not tested")
             return True
         except Exception as e:
-            self.log(f"✗ Error en WebSocket: {e}", "ERROR")
+            self.log(f"✗ Error with WebSocket: {e}", "ERROR")
             self.errors.append(f"WebSocket error: {str(e)}")
             return False
     
     def run_all_checks(self):
-        """Ejecutar todas las validaciones"""
-        self.log("=== Iniciando validación completa ===")
+        """Run all validations"""
+        self.log("=== Starting full validation ===")
         
-        # Esperar a que los servicios inicien
-        self.log("Esperando 10 segundos para que los servicios inicien...")
+        # Wait for services to start
+        self.log("Waiting 10 seconds for services to start...")
         time.sleep(10)
         
-        # Verificar puertos
+        # Verify ports
         ports_ok = all([
             self.check_port(3000, "VNC"),
             self.check_port(8000, "API"),
@@ -188,33 +188,33 @@ class Validator:
         ])
         
         if not ports_ok:
-            self.log("Algunos puertos no están disponibles", "WARNING")
+            self.log("Some ports are not available", "WARNING")
         
-        # Verificar servicios
+        # Verify services
         self.check_vnc()
         self.check_api_health()
         self.check_api_docs()
         self.check_api_endpoints()
         self.check_websocket()
         
-        # Resumen
-        self.log("=== Resumen de validación ===")
+        # Summary
+        self.log("=== Validation Summary ===")
         
         if self.errors:
-            self.log(f"Errores encontrados: {len(self.errors)}", "ERROR")
+            self.log(f"Errors found: {len(self.errors)}", "ERROR")
             for error in self.errors:
                 self.log(f"  - {error}", "ERROR")
         
         if self.warnings:
-            self.log(f"Advertencias: {len(self.warnings)}", "WARNING")
+            self.log(f"Warnings: {len(self.warnings)}", "WARNING")
             for warning in self.warnings:
                 self.log(f"  - {warning}", "WARNING")
         
         if not self.errors:
-            self.log("✓ Todas las validaciones pasaron exitosamente!", "SUCCESS")
+            self.log("✓ All validations passed successfully!", "SUCCESS")
             return 0
         else:
-            self.log("✗ Se encontraron errores en la validación", "ERROR")
+            self.log("✗ Errors were found in the validation", "ERROR")
             return 1
 
 if __name__ == "__main__":

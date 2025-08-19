@@ -1,7 +1,12 @@
 FROM python:3.13-slim
 
+# Set non-interactive frontend for package installations
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install system dependencies and add i386 architecture for Wine
-RUN apt-get update && \
+RUN echo "deb http://deb.debian.org/debian bookworm main" > /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/debian-security bookworm-security main" >> /etc/apt/sources.list && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
     wget \
     curl \
@@ -62,6 +67,7 @@ WORKDIR /app
 
 # Start supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
 
 
 

@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     novnc \
     supervisor \
     net-tools \
-    iproutes2
+    iproutes2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Wine
@@ -93,3 +93,4 @@ WORKDIR /app
 # Start supervisor
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+

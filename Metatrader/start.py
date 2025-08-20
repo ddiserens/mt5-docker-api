@@ -391,21 +391,36 @@ class MT5Installer:
         
         logger.info(f"Starting mt5linux server on port {self.settings.mt5_port}...")
         
-        self.run_command([
+        server_process = self.run_command([
             "python3", "-m", "mt5linux",
             "--host", "0.0.0.0",
             "-p", str(self.settings.mt5_port),
             "-w", "wine", "python.exe"
         ], background=True)
         
-        # Verify that the server is running
-        time.sleep(5)
-        result = self.run_command(["ss", "-tuln"], check=False)
-        
-        if result and f":{self.settings.mt5_port}" in result.stdout:
-            logger.info(f"mt5linux server running on port {self.settings.mt5_port}")
-        else:
-            logger.error("Could not verify the mt5linux server")
+        # Give the process a moment to launch before checking
+        time.sleep(2)
+
+        # Robustly check for the server for up to 30 seconds
+        server_verified = False
+        for _ in range(30):  # Check every second for 30 seconds
+            # First, check if the background process is still running
+            if server_process.poll() is not None:
+                logger.error("mt5linux server process terminated unexpectedly.")
+                # You might want to log server_process.stderr.read() here for more details
+                break
+
+            # Check if the port is open
+            result = self.run_command(["ss", "-tuln"], check=False)
+            if result and f":{self.settings.mt5_port}" in result.stdout:
+                logger.info(f"mt5linux server verified and running on port {self.settings.mt5_port}")
+                server_verified = True
+                break
+            
+            time.sleep(1) # Wait a second before the next check
+
+        if not server_verified:
+            logger.error("Could not verify the mt5linux server after 30 seconds.")
     
     def cleanup(self):
         """Clean up processes on termination"""

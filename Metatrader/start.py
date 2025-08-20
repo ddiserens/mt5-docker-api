@@ -35,7 +35,7 @@ except ImportError:
         cache_ttl_days = 7
         mono_url = "https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi"
         python_url = "https://www.python.org/ftp/python/3.9.0/python-3.9.0.exe"
-        mt5_download_url = "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe"
+        mt5_download_url = "https://download.mql5.com/cdn/web/metaquotes.ltd/mt5/mt5setup.exe"
         required_packages = ["MetaTrader5==5.0.36", "mt5linux", "pyxdg"]
         
         def get_cache_dir(self):

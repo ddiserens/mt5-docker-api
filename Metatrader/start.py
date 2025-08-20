@@ -33,10 +33,10 @@ except ImportError:
         download_timeout = 300
         cache_enabled = True
         cache_ttl_days = 7
-        mono_url = "https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi"
-        python_url = "https://www.python.org/ftp/python/3.9.0/python-3.9.0.exe"
+        mono_url = "https://dl.winehq.org/wine/wine-mono/10.2.0/wine-mono-10.2.0-x86.msi"
+        python_url = "https://www.python.org/ftp/python/3.13.7/python-3.13.7.exe"
         mt5_download_url = "https://download.mql5.com/cdn/web/metaquotes.ltd/mt5/mt5setup.exe"
-        required_packages = ["MetaTrader5==5.0.36", "mt5linux", "pyxdg"]
+        required_packages = ["MetaTrader5==5.0.5200", "mt5linux", "pyxdg"]
         
         def get_cache_dir(self):
             return Path(self.wine_prefix).parent / ".cache"
@@ -55,8 +55,8 @@ logger = logging.getLogger(__name__)
 
 # Known checksums for integrity verification
 KNOWN_CHECKSUMS = {
-    "wine-mono-8.0.0-x86.msi": "3f7b1cd6b7842c09142082e50ece97abe848a033a0838f029c35ce973926c275",
-    "python-3.9.0.exe": "fd2e4c52fb5a0f6c0d7f8c31131a21c57b0728d9e8b3ed7c207ceea8f1078918",
+    "wine-mono-10.2.0-x86.msi": "4e1ed3f02e92d053133d03ddfbefcf6db4a4dc231a9aed3367b17117a88847d8",
+    "python-3.13.7.exe": "f501c1b321c82412ed330ec5604cac39",
 }
 
 class GracefulKiller:

@@ -186,7 +186,11 @@ class MT5Installer:
             
             # Save to cache
             cache_file = self.cache_dir / dest_path.name
-            dest_path.link_to(cache_file)
+
+            if cache_file.exists():
+                cache_file.unlink() # os.link will fail if the destination exists
+            os.link(dest_path, cache_file)
+            
             self._save_cache_metadata(url, {
                 'timestamp': datetime.now().isoformat(),
                 'checksum': self._calculate_checksum(dest_path)

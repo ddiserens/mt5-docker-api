@@ -11,6 +11,7 @@ import logging
 import signal
 import hashlib
 import json
+import shutil
 from pathlib import Path
 from typing import Optional, Dict
 import requests
@@ -189,8 +190,8 @@ class MT5Installer:
 
             if cache_file.exists():
                 cache_file.unlink() # os.link will fail if the destination exists
-            os.link(dest_path, cache_file)
-            
+            shutil.copy(dest_path, cache_file)
+
             self._save_cache_metadata(url, {
                 'timestamp': datetime.now().isoformat(),
                 'checksum': self._calculate_checksum(dest_path)

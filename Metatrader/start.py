@@ -150,7 +150,7 @@ class MT5Installer:
                 cache_time = datetime.fromisoformat(cache_metadata.get('timestamp', ''))
                 if datetime.now() - cache_time < timedelta(days=7):
                     logger.info(f"Using file from cache: {dest_path.name}")
-                    cache_file.rename(dest_path)
+                    shutil.copy(cache_file, dest_path)
                     return True
             
             logger.info(f"Downloading {url} to {dest_path}")

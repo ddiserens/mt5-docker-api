@@ -13,17 +13,17 @@ class MT5Settings(BaseSettings):
 
     # MT5 configuration
     mt5_port: int = Field(default=8001, gt=1024, lt=65535)
-    mt5_version: str = Field(default="5.0.36")
+    mt5_version: str = Field(default="5.0.5200")
 
     # Download URLs
     mono_url: str = Field(
-        default="https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi"
+        default="https://dl.winehq.org/wine/wine-mono/10.2.0/wine-mono-10.2.0-x86.msi"
     )
     python_url: str = Field(
-        default="https://www.python.org/ftp/python/3.9.0/python-3.9.0.exe"
+        default="https://www.python.org/ftp/python/3.13.7/python-3.13.7.exe"
     )
     mt5_download_url: str = Field(
-        default="https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe"
+        default="https://download.mql5.com/cdn/web/metaquotes.ltd/mt5/mt5setup.exe"
     )
 
     # VNC configuration
@@ -33,7 +33,7 @@ class MT5Settings(BaseSettings):
 
     # Python packages
     required_packages: List[str] = Field(
-        default=["MetaTrader5==5.0.36", "mt5linux", "pyxdg"]
+        default=["MetaTrader5==5.0.5200", "mt5linux", "pyxdg"]
     )
 
     # Timeouts and retries
